@@ -1,0 +1,306 @@
+/**
+ * Simple Image Gallery - Frontend Styles
+ *
+ * Design direction: editorial / refined photography portfolio.
+ * Warm neutrals, generous spacing, confident typography, smooth motion.
+ */
+
+/* --- Custom Properties --- */
+.sig-gallery {
+	--sig-image-height: 400px;
+	--sig-gap: clamp(0.5rem, 1.2vw, 1rem);
+	--sig-radius: 3px;
+	--sig-surface: #fafaf8;
+	--sig-overlay: rgba(12, 12, 10, 0.92);
+	--sig-text: #e8e6e1;
+	--sig-text-dim: rgba(232, 230, 225, 0.5);
+	--sig-accent: #e8e6e1;
+	--sig-control-bg: rgba(255, 255, 255, 0.08);
+	--sig-control-hover: rgba(255, 255, 255, 0.15);
+	--sig-transition-fast: 180ms cubic-bezier(0.25, 0.1, 0.25, 1);
+	--sig-transition-smooth: 350ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* --- Gallery Track --- */
+.sig-gallery {
+	position: relative;
+	width: 100%;
+	overflow: hidden;
+}
+
+.sig-gallery__track {
+	display: flex;
+	gap: var(--sig-gap);
+	overflow-x: auto;
+	overflow-y: hidden;
+	scroll-behavior: smooth;
+	-webkit-overflow-scrolling: touch;
+	scrollbar-width: thin;
+	scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
+	padding: 0 0 0.5rem;
+}
+
+.sig-gallery__track::-webkit-scrollbar {
+	height: 4px;
+}
+
+.sig-gallery__track::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.sig-gallery__track::-webkit-scrollbar-thumb {
+	background: rgba(0, 0, 0, 0.15);
+	border-radius: 2px;
+}
+
+.sig-gallery__track::-webkit-scrollbar-thumb:hover {
+	background: rgba(0, 0, 0, 0.3);
+}
+
+/* --- Gallery Items --- */
+.sig-gallery__item {
+	flex: 0 0 auto;
+	height: var(--sig-image-height);
+	border: none;
+	padding: 0;
+	margin: 0;
+	background: var(--sig-surface);
+	border-radius: var(--sig-radius);
+	overflow: hidden;
+	cursor: pointer;
+	position: relative;
+	transition: transform var(--sig-transition-fast),
+	            box-shadow var(--sig-transition-fast);
+	will-change: transform;
+}
+
+.sig-gallery__item::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(
+		to top,
+		rgba(0, 0, 0, 0.06) 0%,
+		transparent 40%
+	);
+	opacity: 0;
+	transition: opacity var(--sig-transition-fast);
+	pointer-events: none;
+	border-radius: var(--sig-radius);
+}
+
+.sig-gallery__item:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08),
+	            0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.sig-gallery__item:hover::after {
+	opacity: 1;
+}
+
+.sig-gallery__item:focus-visible {
+	outline: 2px solid #1e1e1e;
+	outline-offset: 2px;
+}
+
+.sig-gallery__item img {
+	height: 100%;
+	width: auto;
+	display: block;
+	object-fit: cover;
+	transition: transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sig-gallery__item:hover img {
+	transform: scale(1.03);
+}
+
+/* --- Lightbox --- */
+.sig-lightbox {
+	position: fixed;
+	inset: 0;
+	z-index: 999999;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	opacity: 0;
+	visibility: hidden;
+	transition: opacity var(--sig-transition-smooth, 350ms cubic-bezier(0.16, 1, 0.3, 1)),
+	            visibility 0s linear 350ms;
+}
+
+.sig-lightbox--open {
+	opacity: 1;
+	visibility: visible;
+	transition: opacity var(--sig-transition-smooth, 350ms cubic-bezier(0.16, 1, 0.3, 1)),
+	            visibility 0s;
+}
+
+.sig-lightbox__backdrop {
+	position: absolute;
+	inset: 0;
+	background: var(--sig-overlay, rgba(12, 12, 10, 0.92));
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+}
+
+.sig-lightbox__content {
+	position: relative;
+	z-index: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 100%;
+	padding: 3rem;
+}
+
+.sig-lightbox__image-wrap {
+	max-width: 90vw;
+	max-height: 85vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.sig-lightbox__image {
+	max-width: 100%;
+	max-height: 85vh;
+	width: auto;
+	height: auto;
+	display: block;
+	border-radius: 2px;
+	box-shadow: 0 16px 48px rgba(0, 0, 0, 0.3),
+	            0 4px 16px rgba(0, 0, 0, 0.2);
+	transition: opacity 250ms ease;
+}
+
+/* --- Lightbox Controls --- */
+.sig-lightbox__close {
+	position: absolute;
+	top: 1.25rem;
+	right: 1.25rem;
+	width: 44px;
+	height: 44px;
+	border: none;
+	border-radius: 50%;
+	background: var(--sig-control-bg, rgba(255, 255, 255, 0.08));
+	color: var(--sig-text, #e8e6e1);
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: background var(--sig-transition-fast, 180ms ease),
+	            transform var(--sig-transition-fast, 180ms ease);
+}
+
+.sig-lightbox__close:hover {
+	background: var(--sig-control-hover, rgba(255, 255, 255, 0.15));
+	transform: scale(1.08);
+}
+
+.sig-lightbox__close:focus-visible {
+	outline: 2px solid var(--sig-accent, #e8e6e1);
+	outline-offset: 2px;
+}
+
+.sig-lightbox__nav {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 48px;
+	height: 48px;
+	border: none;
+	border-radius: 50%;
+	background: var(--sig-control-bg, rgba(255, 255, 255, 0.08));
+	color: var(--sig-text, #e8e6e1);
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: background var(--sig-transition-fast, 180ms ease),
+	            transform var(--sig-transition-fast, 180ms ease);
+}
+
+.sig-lightbox__nav:hover {
+	background: var(--sig-control-hover, rgba(255, 255, 255, 0.15));
+}
+
+.sig-lightbox__nav:focus-visible {
+	outline: 2px solid var(--sig-accent, #e8e6e1);
+	outline-offset: 2px;
+}
+
+.sig-lightbox__nav--prev {
+	left: 1.25rem;
+}
+
+.sig-lightbox__nav--prev:hover {
+	transform: translateY(-50%) translateX(-2px);
+}
+
+.sig-lightbox__nav--next {
+	right: 1.25rem;
+}
+
+.sig-lightbox__nav--next:hover {
+	transform: translateY(-50%) translateX(2px);
+}
+
+.sig-lightbox__counter {
+	position: absolute;
+	bottom: 1.5rem;
+	left: 50%;
+	transform: translateX(-50%);
+	color: var(--sig-text-dim, rgba(232, 230, 225, 0.5));
+	font-size: 0.8125rem;
+	font-variant-numeric: tabular-nums;
+	letter-spacing: 0.08em;
+	user-select: none;
+}
+
+/* --- Mobile: Stack Vertically --- */
+@media (max-width: 768px) {
+	.sig-gallery {
+		--sig-gap: 0.625rem;
+	}
+
+	.sig-gallery__track {
+		flex-direction: column;
+		overflow-x: hidden;
+		overflow-y: visible;
+	}
+
+	.sig-gallery__item {
+		height: auto;
+		width: 100%;
+	}
+
+	.sig-gallery__item img {
+		width: 100%;
+		height: auto;
+	}
+
+	.sig-lightbox__content {
+		padding: 1rem;
+	}
+
+	.sig-lightbox__nav {
+		width: 40px;
+		height: 40px;
+	}
+
+	.sig-lightbox__nav--prev {
+		left: 0.75rem;
+	}
+
+	.sig-lightbox__nav--next {
+		right: 0.75rem;
+	}
+
+	.sig-lightbox__close {
+		top: 0.75rem;
+		right: 0.75rem;
+	}
+}
