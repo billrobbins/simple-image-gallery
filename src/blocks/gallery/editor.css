@@ -1,0 +1,69 @@
+/**
+ * Editor-only styles for the gallery block.
+ */
+
+.sig-editor-gallery {
+	padding: 1rem;
+}
+
+.sig-editor-gallery__preview {
+	display: flex;
+	gap: 0.75rem;
+	overflow-x: auto;
+	padding-bottom: 1rem;
+	margin-bottom: 1rem;
+}
+
+.sig-editor-gallery__item {
+	position: relative;
+	flex: 0 0 auto;
+	height: 200px;
+	border-radius: 4px;
+	overflow: hidden;
+}
+
+.sig-editor-gallery__item img {
+	height: 100%;
+	width: auto;
+	display: block;
+}
+
+.sig-height-control {
+	margin-top: 1rem;
+}
+
+.sig-height-control__label {
+	display: block;
+	margin-bottom: 0.5rem;
+	font-size: 11px;
+	font-weight: 500;
+	text-transform: uppercase;
+}
+
+.sig-editor-gallery__remove {
+	position: absolute;
+	top: 4px;
+	right: 4px;
+	width: 24px;
+	height: 24px;
+	border: none;
+	border-radius: 50%;
+	background: rgba(0, 0, 0, 0.6);
+	color: #fff;
+	font-size: 16px;
+	line-height: 1;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	opacity: 0;
+	transition: opacity 0.15s ease;
+}
+
+.sig-editor-gallery__item:hover .sig-editor-gallery__remove {
+	opacity: 1;
+}
+
+.sig-editor-gallery__add-btn {
+	margin-top: 0.5rem;
+}
