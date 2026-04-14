@@ -98,7 +98,11 @@ function buildLightboxDOM() {
 class SIGLightbox {
 	constructor( galleryEl ) {
 		this.gallery = galleryEl;
-		this.images = JSON.parse( galleryEl.dataset.images || '[]' );
+		try {
+			this.images = JSON.parse( galleryEl.dataset.images || '[]' );
+		} catch {
+			this.images = [];
+		}
 		this.currentIndex = 0;
 		this.lightbox = null;
 		this.isOpen = false;
@@ -123,10 +127,13 @@ class SIGLightbox {
 	}
 
 	bindLightboxEvents() {
-		this.lightbox.querySelector( '.sig-lightbox__close' ).addEventListener( 'click', () => this.close() );
-		this.lightbox.querySelector( '.sig-lightbox__backdrop' ).addEventListener( 'click', () => this.close() );
-		this.lightbox.querySelector( '.sig-lightbox__nav--prev' ).addEventListener( 'click', () => this.prev() );
-		this.lightbox.querySelector( '.sig-lightbox__nav--next' ).addEventListener( 'click', () => this.next() );
+		this.closeBtn = this.lightbox.querySelector( '.sig-lightbox__close' );
+		this.backdropEl = this.lightbox.querySelector( '.sig-lightbox__backdrop' );
+
+		this.closeBtn.addEventListener( 'click', () => this.close() );
+		this.backdropEl.addEventListener( 'click', () => this.close() );
+		this.prevBtn.addEventListener( 'click', () => this.prev() );
+		this.nextBtn.addEventListener( 'click', () => this.next() );
 
 		// Touch swipe support.
 		const content = this.lightbox.querySelector( '.sig-lightbox__content' );
@@ -166,22 +173,54 @@ class SIGLightbox {
 				this.prev();
 			} else if ( e.key === 'ArrowRight' ) {
 				this.next();
+			} else if ( e.key === 'Tab' ) {
+				this.trapFocus( e );
 			}
 		} );
 	}
 
+	/**
+	 * Trap focus within the lightbox when it is open.
+	 *
+	 * @param {KeyboardEvent} e The keydown event.
+	 */
+	trapFocus( e ) {
+		const focusable = this.lightbox.querySelectorAll( 'button:not([style*="display: none"])' );
+		if ( focusable.length === 0 ) {
+			return;
+		}
+		const first = focusable[ 0 ];
+		const last = focusable[ focusable.length - 1 ];
+
+		if ( e.shiftKey ) {
+			if ( document.activeElement === first ) {
+				e.preventDefault();
+				last.focus();
+			}
+		} else if ( document.activeElement === last ) {
+			e.preventDefault();
+			first.focus();
+		}
+	}
+
 	open( index ) {
+		this.triggerEl = document.activeElement;
 		this.currentIndex = index;
 		this.updateImage();
 		this.lightbox.classList.add( 'sig-lightbox--open' );
 		this.isOpen = true;
 		document.body.style.overflow = 'hidden';
+		this.closeBtn.focus();
 	}
 
 	close() {
 		this.lightbox.classList.remove( 'sig-lightbox--open' );
 		this.isOpen = false;
 		document.body.style.overflow = '';
+		if ( this.triggerEl ) {
+			this.triggerEl.focus();
+			this.triggerEl = null;
+		}
 	}
 
 	prev() {

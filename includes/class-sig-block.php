@@ -132,16 +132,19 @@ class SIG_Block {
 	}
 
 	/**
-	 * Enqueue frontend scripts and styles.
+	 * Enqueue frontend scripts and styles. Safe to call multiple times.
 	 */
 	private function enqueue_frontend_assets() {
-		$asset_file = SIG_PLUGIN_DIR . 'build/frontend.asset.php';
-		$asset      = file_exists( $asset_file )
-			? require $asset_file
-			: array(
-				'dependencies' => array(),
-				'version'      => SIG_VERSION,
-			);
+		static $asset = null;
+		if ( null === $asset ) {
+			$asset_file = SIG_PLUGIN_DIR . 'build/frontend.asset.php';
+			$asset      = file_exists( $asset_file )
+				? require $asset_file
+				: array(
+					'dependencies' => array(),
+					'version'      => SIG_VERSION,
+				);
+		}
 
 		wp_enqueue_style(
 			'sig-frontend-style',
