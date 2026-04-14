@@ -55,9 +55,13 @@ class SIG_Block {
 						'type'    => 'boolean',
 						'default' => false,
 					),
-					'imageHeight' => array(
+					'galleryHeight' => array(
 						'type'    => 'number',
 						'default' => 400,
+					),
+					'galleryHeightUnit' => array(
+						'type'    => 'string',
+						'default' => 'px',
 					),
 				),
 			)
@@ -71,9 +75,15 @@ class SIG_Block {
 	 * @return string Rendered HTML.
 	 */
 	public function render_block( $attributes ) {
-		$images           = $attributes['images'] ?? array();
-		$use_product      = $attributes['useProductGallery'] ?? false;
-		$image_height     = $attributes['imageHeight'] ?? 400;
+		$images      = $attributes['images'] ?? array();
+		$use_product = $attributes['useProductGallery'] ?? false;
+		$height      = $attributes['galleryHeight'] ?? 400;
+		$height_unit = $attributes['galleryHeightUnit'] ?? 'px';
+
+		$allowed_units = array( 'px', 'vh', 'svh', 'dvh', 'em', 'rem', '%' );
+		if ( ! in_array( $height_unit, $allowed_units, true ) ) {
+			$height_unit = 'px';
+		}
 
 		if ( $use_product ) {
 			$images = $this->get_product_gallery_images();
@@ -93,8 +103,7 @@ class SIG_Block {
 			class="sig-gallery"
 			id="<?php echo esc_attr( $gallery_id ); ?>"
 			data-images="<?php echo esc_attr( wp_json_encode( $images ) ); ?>"
-			data-height="<?php echo esc_attr( $image_height ); ?>"
-			style="--sig-image-height: <?php echo intval( $image_height ); ?>px;"
+			style="height: <?php echo floatval( $height ) . esc_attr( $height_unit ); ?>;"
 		>
 			<div class="sig-gallery__track">
 				<?php foreach ( $images as $index => $image ) : ?>

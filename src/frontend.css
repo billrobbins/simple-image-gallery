@@ -7,8 +7,7 @@
 
 /* --- Custom Properties --- */
 .sig-gallery {
-	--sig-image-height: 400px;
-	--sig-gap: clamp(0.5rem, 1.2vw, 1rem);
+	--sig-gap: clamp(1rem, 2vw, 1.5rem);
 	--sig-radius: 3px;
 	--sig-surface: #fafaf8;
 	--sig-overlay: rgba(12, 12, 10, 0.92);
@@ -25,48 +24,34 @@
 .sig-gallery {
 	position: relative;
 	width: 100%;
-	overflow: hidden;
+	height: 100%;
 }
 
 .sig-gallery__track {
 	display: flex;
+	align-items: stretch;
 	gap: var(--sig-gap);
+	height: 100%;
 	overflow-x: auto;
 	overflow-y: hidden;
 	scroll-behavior: smooth;
 	-webkit-overflow-scrolling: touch;
-	scrollbar-width: thin;
-	scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
-	padding: 0 0 0.5rem;
+	scrollbar-width: none;
+	-ms-overflow-style: none;
 }
 
 .sig-gallery__track::-webkit-scrollbar {
-	height: 4px;
-}
-
-.sig-gallery__track::-webkit-scrollbar-track {
-	background: transparent;
-}
-
-.sig-gallery__track::-webkit-scrollbar-thumb {
-	background: rgba(0, 0, 0, 0.15);
-	border-radius: 2px;
-}
-
-.sig-gallery__track::-webkit-scrollbar-thumb:hover {
-	background: rgba(0, 0, 0, 0.3);
+	display: none;
 }
 
 /* --- Gallery Items --- */
 .sig-gallery__item {
 	flex: 0 0 auto;
-	height: var(--sig-image-height);
 	border: none;
 	padding: 0;
 	margin: 0;
 	background: var(--sig-surface);
 	border-radius: var(--sig-radius);
-	overflow: hidden;
 	cursor: pointer;
 	position: relative;
 	transition: transform var(--sig-transition-fast),
@@ -108,7 +93,7 @@
 	height: 100%;
 	width: auto;
 	display: block;
-	object-fit: cover;
+	border-radius: var(--sig-radius);
 	transition: transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 

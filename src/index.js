@@ -24,9 +24,13 @@ registerBlockType( 'sig/gallery', {
 			type: 'boolean',
 			default: false,
 		},
-		imageHeight: {
+		galleryHeight: {
 			type: 'number',
 			default: 400,
+		},
+		galleryHeightUnit: {
+			type: 'string',
+			default: 'px',
 		},
 	},
 	edit: Edit,

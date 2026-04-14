@@ -10,15 +10,29 @@ import {
 import {
 	PanelBody,
 	ToggleControl,
-	RangeControl,
 	Button,
 	Placeholder,
+	__experimentalNumberControl as NumberControl,
+	SelectControl,
+	Flex,
+	FlexBlock,
+	FlexItem,
 } from '@wordpress/components';
 
 const ALLOWED_MEDIA_TYPES = [ 'image' ];
 
+const HEIGHT_UNITS = [
+	{ label: 'px', value: 'px' },
+	{ label: 'vh', value: 'vh' },
+	{ label: 'svh', value: 'svh' },
+	{ label: 'dvh', value: 'dvh' },
+	{ label: 'em', value: 'em' },
+	{ label: 'rem', value: 'rem' },
+	{ label: '%', value: '%' },
+];
+
 export default function Edit( { attributes, setAttributes } ) {
-	const { images, useProductGallery, imageHeight } = attributes;
+	const { images, useProductGallery, galleryHeight, galleryHeightUnit } = attributes;
 
 	const onSelectImages = ( newImages ) => {
 		const formatted = newImages.map( ( img ) => ( {
@@ -46,14 +60,29 @@ export default function Edit( { attributes, setAttributes } ) {
 						checked={ useProductGallery }
 						onChange={ ( value ) => setAttributes( { useProductGallery: value } ) }
 					/>
-					<RangeControl
-						label={ __( 'Image Height (px)', 'simple-image-gallery' ) }
-						value={ imageHeight }
-						onChange={ ( value ) => setAttributes( { imageHeight: value } ) }
-						min={ 200 }
-						max={ 800 }
-						step={ 10 }
-					/>
+					<div className="sig-height-control">
+						<span className="sig-height-control__label">
+							{ __( 'Gallery Height', 'simple-image-gallery' ) }
+						</span>
+						<Flex>
+							<FlexBlock>
+								<NumberControl
+									value={ galleryHeight }
+									onChange={ ( value ) => setAttributes( { galleryHeight: parseFloat( value ) || 0 } ) }
+									min={ 0 }
+									step={ galleryHeightUnit === 'px' ? 10 : 1 }
+								/>
+							</FlexBlock>
+							<FlexItem>
+								<SelectControl
+									value={ galleryHeightUnit }
+									options={ HEIGHT_UNITS }
+									onChange={ ( value ) => setAttributes( { galleryHeightUnit: value } ) }
+									__nextHasNoMarginBottom
+								/>
+							</FlexItem>
+						</Flex>
+					</div>
 				</PanelBody>
 			</InspectorControls>
 
@@ -67,10 +96,7 @@ export default function Edit( { attributes, setAttributes } ) {
 				) : (
 					<>
 						{ images.length > 0 && (
-							<div
-								className="sig-editor-gallery__preview"
-								style={ { '--sig-image-height': `${ Math.min( imageHeight, 300 ) }px` } }
-							>
+							<div className="sig-editor-gallery__preview">
 								{ images.map( ( image, index ) => (
 									<div key={ image.id || index } className="sig-editor-gallery__item">
 										<img src={ image.url } alt={ image.alt } />
