@@ -17,6 +17,7 @@ define( 'SIG_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'SIG_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'SIG_VERSION', '1.0.0' );
 
+require_once SIG_PLUGIN_DIR . 'includes/class-sig-images.php';
 require_once SIG_PLUGIN_DIR . 'includes/class-sig-block.php';
 require_once SIG_PLUGIN_DIR . 'includes/class-sig-rest-api.php';
 

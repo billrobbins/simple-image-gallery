@@ -57,37 +57,14 @@ class SIG_REST_API {
 		}
 
 		$product_id = $request->get_param( 'id' );
-		$product    = wc_get_product( $product_id );
+		$images     = SIG_Images::get_product_gallery( $product_id );
 
-		if ( ! $product ) {
+		if ( empty( $images ) ) {
 			return new WP_Error(
 				'product_not_found',
-				__( 'Product not found.', 'simple-image-gallery' ),
+				__( 'Product not found or has no gallery images.', 'simple-image-gallery' ),
 				array( 'status' => 404 )
 			);
-		}
-
-		$images    = array();
-		$image_ids = $product->get_gallery_image_ids();
-		$featured  = $product->get_image_id();
-
-		if ( $featured ) {
-			array_unshift( $image_ids, $featured );
-		}
-
-		foreach ( $image_ids as $image_id ) {
-			$full_url  = wp_get_attachment_image_url( $image_id, 'full' );
-			$large_url = wp_get_attachment_image_url( $image_id, 'large' );
-			$alt       = get_post_meta( $image_id, '_wp_attachment_image_alt', true );
-
-			if ( $full_url ) {
-				$images[] = array(
-					'id'      => $image_id,
-					'url'     => $large_url ?: $full_url,
-					'fullUrl' => $full_url,
-					'alt'     => $alt ?: '',
-				);
-			}
 		}
 
 		return rest_ensure_response( $images );

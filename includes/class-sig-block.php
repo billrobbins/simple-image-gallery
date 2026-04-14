@@ -123,44 +123,12 @@ class SIG_Block {
 	 * @return array Array of image data.
 	 */
 	private function get_product_gallery_images() {
-		if ( ! function_exists( 'wc_get_product' ) ) {
-			return array();
-		}
-
 		$product_id = get_the_ID();
 		if ( ! $product_id ) {
 			return array();
 		}
 
-		$product = wc_get_product( $product_id );
-		if ( ! $product ) {
-			return array();
-		}
-
-		$images     = array();
-		$image_ids  = $product->get_gallery_image_ids();
-		$featured   = $product->get_image_id();
-
-		if ( $featured ) {
-			array_unshift( $image_ids, $featured );
-		}
-
-		foreach ( $image_ids as $image_id ) {
-			$full_url  = wp_get_attachment_image_url( $image_id, 'full' );
-			$large_url = wp_get_attachment_image_url( $image_id, 'large' );
-			$alt       = get_post_meta( $image_id, '_wp_attachment_image_alt', true );
-
-			if ( $full_url ) {
-				$images[] = array(
-					'id'      => $image_id,
-					'url'     => $large_url ?: $full_url,
-					'fullUrl' => $full_url,
-					'alt'     => $alt ?: '',
-				);
-			}
-		}
-
-		return $images;
+		return SIG_Images::get_product_gallery( $product_id );
 	}
 
 	/**
