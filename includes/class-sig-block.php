@@ -9,7 +9,6 @@ class SIG_Block {
 
 	public function __construct() {
 		add_action( 'init', array( $this, 'register_block' ) );
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_frontend_assets' ) );
 	}
 
 	public function register_block(): void {
@@ -61,6 +60,8 @@ class SIG_Block {
 
 		$style = esc_attr( '--sig-height: ' . $height );
 
+		$this->enqueue_frontend_assets();
+
 		$html  = '<div class="sig-gallery" role="region" aria-label="' . esc_attr__( 'Image gallery', 'simple-image-gallery' ) . '" tabindex="0" style="' . $style . '" data-source="' . esc_attr( $source ) . '">';
 		foreach ( $images as $image ) {
 			$url = isset( $image['url'] ) ? esc_url( $image['url'] ) : '';
@@ -75,10 +76,6 @@ class SIG_Block {
 	}
 
 	public function enqueue_frontend_assets(): void {
-		if ( ! has_block( 'simple-image-gallery/gallery' ) ) {
-			return;
-		}
-
 		static $asset_file = null;
 		if ( null === $asset_file ) {
 			$asset_path = SIG_PATH . 'build/frontend.asset.php';
