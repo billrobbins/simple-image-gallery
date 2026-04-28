@@ -1,0 +1,38 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "simple-image-gallery/gallery",
+  "title": "Simple Image Gallery",
+  "category": "media",
+  "description": "A horizontally scrolling image gallery with WooCommerce support.",
+  "keywords": ["gallery", "images", "woocommerce", "scroll"],
+  "textdomain": "simple-image-gallery",
+  "editorScript": "file:../../index.js",
+  "style": "file:../../frontend.css",
+  "attributes": {
+    "source": {
+      "type": "string",
+      "default": "woocommerce"
+    },
+    "images": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "number" },
+          "url": { "type": "string" },
+          "alt": { "type": "string" }
+        }
+      }
+    },
+    "height": {
+      "type": "string",
+      "default": "70vh"
+    }
+  },
+  "supports": {
+    "html": false,
+    "align": ["wide", "full"]
+  }
+}

@@ -1,0 +1,28 @@
+/*
+ * Simple Image Gallery — frontend styles
+ */
+
+.sig-gallery {
+	display: flex;
+	flex-direction: row;
+	height: var( --sig-height, 70vh );
+	overflow-x: auto;
+	overflow-y: hidden;
+	scroll-behavior: smooth;
+	-webkit-overflow-scrolling: touch;
+
+	/* Hide scrollbar visually while preserving scroll functionality */
+	scrollbar-width: none; /* Firefox */
+}
+
+.sig-gallery::-webkit-scrollbar {
+	display: none; /* Chrome, Safari, Edge */
+}
+
+.sig-gallery img {
+	display: block;
+	height: 100%;
+	width: auto;
+	flex-shrink: 0;
+	object-fit: cover;
+}

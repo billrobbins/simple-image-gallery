@@ -1,0 +1,33 @@
+/*
+ * Simple Image Gallery — editor styles
+ */
+
+.sig-editor-placeholder {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 120px;
+	background: #f0f0f1;
+	border: 1px dashed #949494;
+	border-radius: 2px;
+	padding: 16px;
+}
+
+.sig-editor-placeholder p {
+	margin: 0;
+	color: #757575;
+	font-style: italic;
+}
+
+.sig-gallery-editor .sig-gallery {
+	/* In the editor, show a static preview without scroll */
+	overflow: visible;
+	flex-wrap: wrap;
+	height: auto;
+}
+
+.sig-gallery-editor .sig-gallery img {
+	height: 120px;
+	width: auto;
+	margin: 4px;
+}
