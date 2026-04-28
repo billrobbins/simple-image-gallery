@@ -7,7 +7,11 @@ import './frontend.css';
  * on .sig-gallery containers.
  */
 
-document.addEventListener( 'DOMContentLoaded', initGalleries );
+if ( document.readyState === 'loading' ) {
+	document.addEventListener( 'DOMContentLoaded', initGalleries );
+} else {
+	initGalleries();
+}
 
 function initGalleries() {
 	document.querySelectorAll( '.sig-gallery' ).forEach( initGallery );
