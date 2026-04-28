@@ -41,9 +41,11 @@ class SIG_Block {
 	 * @return string HTML output.
 	 */
 	public function render( array $attributes ): string {
-		$source = in_array( $attributes['source'] ?? '', self::ALLOWED_SOURCES, true )
-			? $attributes['source']
-			: 'woocommerce';
+		$raw_source = $attributes['source'] ?? '';
+		if ( ! in_array( $raw_source, self::ALLOWED_SOURCES, true ) ) {
+			return '';
+		}
+		$source = $raw_source;
 
 		$height = $this->sanitize_css_dimension( $attributes['height'] ?? '70vh', '70vh' );
 
@@ -58,10 +60,9 @@ class SIG_Block {
 		}
 
 		$html = sprintf(
-			'<div class="sig-gallery" role="region" aria-label="%s" tabindex="0" style="%s" data-source="%s">',
+			'<div class="sig-gallery" role="region" aria-label="%s" tabindex="0" style="%s">',
 			esc_attr__( 'Image gallery', 'simple-image-gallery' ),
-			esc_attr( '--sig-height: ' . $height ),
-			esc_attr( $source )
+			esc_attr( '--sig-height: ' . $height )
 		);
 
 		foreach ( $images as $image ) {

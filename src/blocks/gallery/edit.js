@@ -1,4 +1,5 @@
 import './editor.css';
+import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import {
 	useBlockProps,
@@ -21,6 +22,10 @@ export default function Edit( { attributes, setAttributes } ) {
 	const isWoo = source === 'woocommerce';
 	const hasImages = images.length > 0;
 	const safeHeight = SAFE_DIMENSION.test( height ) ? height : '70vh';
+
+	// Local state for the height input so setAttributes (and undo entries)
+	// only fire on blur, not on every keystroke.
+	const [ heightInput, setHeightInput ] = useState( height );
 
 	function onSelectImages( media ) {
 		setAttributes( {
@@ -57,7 +62,12 @@ export default function Edit( { attributes, setAttributes } ) {
 		);
 	} else {
 		preview = (
-			<div className="sig-gallery" style={ { '--sig-height': safeHeight } }>
+			<div
+				className="sig-gallery"
+				role="region"
+				aria-label={ __( 'Image gallery', 'simple-image-gallery' ) }
+				style={ { '--sig-height': safeHeight } }
+			>
 				{ images.map( ( img ) => (
 					<img key={ img.id } src={ img.url } alt={ img.alt } />
 				) ) }
@@ -87,8 +97,9 @@ export default function Edit( { attributes, setAttributes } ) {
 					<TextControl
 						label={ __( 'Gallery Height', 'simple-image-gallery' ) }
 						help={ __( 'CSS value, e.g. 70vh, 400px', 'simple-image-gallery' ) }
-						value={ height }
-						onChange={ ( value ) => setAttributes( { height: value } ) }
+						value={ heightInput }
+						onChange={ setHeightInput }
+						onBlur={ () => setAttributes( { height: heightInput } ) }
 					/>
 					{ ! isWoo && (
 						<MediaUploadCheck>

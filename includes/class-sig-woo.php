@@ -23,7 +23,11 @@ class SIG_Woo {
 		// Cache by post ID before resolving $product to avoid wc_get_product()
 		// DB calls on subsequent renders of the same block on one page.
 		static $cache = array();
-		$post_id = (int) get_the_ID();
+		$post_id = get_the_ID();
+		if ( ! $post_id ) {
+			return array();
+		}
+		$post_id = (int) $post_id;
 		if ( isset( $cache[ $post_id ] ) ) {
 			return $cache[ $post_id ];
 		}
