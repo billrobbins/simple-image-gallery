@@ -27,9 +27,25 @@ class SIG_Block {
 	 * @param array $attributes Block attributes.
 	 * @return string HTML output.
 	 */
+	/**
+	 * Sanitize a CSS dimension value (e.g. 70vh, 400px, 50%).
+	 * Returns the fallback if the value doesn't match a safe pattern.
+	 *
+	 * @param string $value    User-supplied CSS value.
+	 * @param string $fallback Safe default.
+	 * @return string
+	 */
+	private function sanitize_css_dimension( string $value, string $fallback ): string {
+		if ( preg_match( '/^\d+(\.\d+)?(px|em|rem|vh|vw|%)$/', $value ) ) {
+			return $value;
+		}
+		return $fallback;
+	}
+
 	public function render( array $attributes ): string {
 		$source = isset( $attributes['source'] ) ? $attributes['source'] : 'woocommerce';
-		$height = isset( $attributes['height'] ) && $attributes['height'] ? $attributes['height'] : '70vh';
+		$raw_height = isset( $attributes['height'] ) && $attributes['height'] ? $attributes['height'] : '70vh';
+		$height = $this->sanitize_css_dimension( $raw_height, '70vh' );
 
 		if ( 'woocommerce' === $source ) {
 			$images = SIG_Woo::get_product_images();
@@ -45,7 +61,7 @@ class SIG_Block {
 
 		$style = esc_attr( '--sig-height: ' . $height );
 
-		$html  = '<div class="sig-gallery" style="' . $style . '" data-source="' . esc_attr( $source ) . '">';
+		$html  = '<div class="sig-gallery" role="region" aria-label="' . esc_attr__( 'Image gallery', 'simple-image-gallery' ) . '" tabindex="0" style="' . $style . '" data-source="' . esc_attr( $source ) . '">';
 		foreach ( $images as $image ) {
 			$url = isset( $image['url'] ) ? esc_url( $image['url'] ) : '';
 			$alt = isset( $image['alt'] ) ? esc_attr( $image['alt'] ) : '';
