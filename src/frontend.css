@@ -8,7 +8,6 @@
 	height: var( --sig-height, 70vh );
 	overflow-x: auto;
 	overflow-y: hidden;
-	scroll-behavior: smooth;
 	scrollbar-width: none; /* Firefox */
 }
 

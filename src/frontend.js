@@ -40,7 +40,7 @@ function initGallery( gallery ) {
 			const delta = Math.abs( event.deltaY ) >= Math.abs( event.deltaX )
 				? event.deltaY
 				: event.deltaX;
-			gallery.scrollLeft += delta;
+			gallery.scrollLeft += delta * 3;
 		},
 		{ passive: false }
 	);
@@ -48,10 +48,10 @@ function initGallery( gallery ) {
 	gallery.addEventListener( 'keydown', ( event ) => {
 		if ( event.key === 'ArrowRight' ) {
 			event.preventDefault();
-			gallery.scrollLeft += KEYBOARD_SCROLL_STEP;
+			gallery.scrollBy( { left: KEYBOARD_SCROLL_STEP, behavior: 'smooth' } );
 		} else if ( event.key === 'ArrowLeft' ) {
 			event.preventDefault();
-			gallery.scrollLeft -= KEYBOARD_SCROLL_STEP;
+			gallery.scrollBy( { left: -KEYBOARD_SCROLL_STEP, behavior: 'smooth' } );
 		}
 	} );
 }
