@@ -1,1 +1,1 @@
-.sig-gallery{display:flex;gap:12px;height:var( --sig-height,70vh );overflow-x:auto;overflow-y:hidden;scrollbar-width:none}.sig-gallery::-webkit-scrollbar{display:none}.sig-gallery img{display:block;flex-shrink:0;height:100%;width:auto}
+.sig-gallery{display:flex;gap:12px;height:var( --sig-height,70vh );overflow-x:auto;overflow-y:hidden;scrollbar-width:none}.sig-gallery::-webkit-scrollbar{display:none}.sig-gallery:focus-visible{outline:2px solid;outline-offset:2px}.sig-gallery img{display:block;flex-shrink:0;height:100%;width:auto}

@@ -7,6 +7,9 @@ defined( 'ABSPATH' ) || exit;
 
 class SIG_Block {
 
+	/** Allowed values for the `source` block attribute. */
+	private const ALLOWED_SOURCES = array( 'woocommerce', 'adhoc' );
+
 	public function __construct() {
 		add_action( 'init', array( $this, 'register_block' ) );
 	}
@@ -38,18 +41,21 @@ class SIG_Block {
 	 * @return string HTML output.
 	 */
 	public function render( array $attributes ): string {
-		$source = $attributes['source'] ?? 'woocommerce';
+		$source = in_array( $attributes['source'] ?? '', self::ALLOWED_SOURCES, true )
+			? $attributes['source']
+			: 'woocommerce';
+
 		$height = $this->sanitize_css_dimension( $attributes['height'] ?? '70vh', '70vh' );
 
-		$images = ( 'woocommerce' === $source )
-			? SIG_Woo::get_product_images()
-			: ( $attributes['images'] ?? array() );
+		if ( 'woocommerce' === $source ) {
+			$images = SIG_Woo::get_product_images();
+		} else {
+			$images = is_array( $attributes['images'] ?? null ) ? $attributes['images'] : array();
+		}
 
 		if ( empty( $images ) ) {
 			return '';
 		}
-
-		$this->enqueue_frontend_assets();
 
 		$html = sprintf(
 			'<div class="sig-gallery" role="region" aria-label="%s" tabindex="0" style="%s" data-source="%s">',
@@ -59,40 +65,23 @@ class SIG_Block {
 		);
 
 		foreach ( $images as $image ) {
-			$url = isset( $image['url'] ) ? esc_url( $image['url'] ) : '';
+			// For adhoc images, derive a fresh URL from the attachment ID so stored
+			// URLs don't break after site migrations or attachment replacements.
+			if ( ! empty( $image['id'] ) && 'adhoc' === $source ) {
+				$url = wp_get_attachment_image_url( (int) $image['id'], 'full' );
+				$alt = (string) get_post_meta( (int) $image['id'], '_wp_attachment_image_alt', true );
+			} else {
+				$url = isset( $image['url'] ) ? $image['url'] : '';
+				$alt = isset( $image['alt'] ) ? $image['alt'] : '';
+			}
+
+			$url = esc_url( $url );
 			if ( ! $url ) {
 				continue;
 			}
-			$alt = isset( $image['alt'] ) ? esc_attr( $image['alt'] ) : '';
-			$html .= '<img src="' . $url . '" alt="' . $alt . '" loading="lazy">';
+			$html .= '<img src="' . $url . '" alt="' . esc_attr( $alt ) . '" loading="lazy">';
 		}
 
 		return $html . '</div>';
-	}
-
-	public function enqueue_frontend_assets(): void {
-		static $asset_file = null;
-		if ( null === $asset_file ) {
-			$asset_path = SIG_PATH . 'build/frontend.asset.php';
-			$asset_file = file_exists( $asset_path ) ? require $asset_path : array(
-				'dependencies' => array(),
-				'version'      => SIG_VERSION,
-			);
-		}
-
-		wp_enqueue_script(
-			'sig-frontend',
-			SIG_URL . 'build/frontend.js',
-			$asset_file['dependencies'],
-			$asset_file['version'],
-			true
-		);
-
-		wp_enqueue_style(
-			'sig-frontend',
-			SIG_URL . 'build/frontend.css',
-			array(),
-			SIG_VERSION
-		);
 	}
 }

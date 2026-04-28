@@ -13,14 +13,14 @@ import {
 	Button,
 } from '@wordpress/components';
 
-/**
- * Editor component for the Simple Image Gallery block.
- */
+const SAFE_DIMENSION = /^\d+(\.\d+)?(px|em|rem|vh|vw|%)$/;
+
 export default function Edit( { attributes, setAttributes } ) {
 	const { source, images, height } = attributes;
 	const blockProps = useBlockProps( { className: 'sig-gallery-editor' } );
 	const isWoo = source === 'woocommerce';
 	const hasImages = images.length > 0;
+	const safeHeight = SAFE_DIMENSION.test( height ) ? height : '70vh';
 
 	function onSelectImages( media ) {
 		setAttributes( {
@@ -32,35 +32,32 @@ export default function Edit( { attributes, setAttributes } ) {
 		} );
 	}
 
-	function renderPreview() {
-		if ( isWoo ) {
-			return (
-				<div className="sig-editor-placeholder">
-					<p>
-						{ __(
-							'WooCommerce product images will appear here on the frontend.',
-							'simple-image-gallery'
-						) }
-					</p>
-				</div>
-			);
-		}
-
-		if ( ! hasImages ) {
-			return (
-				<div className="sig-editor-placeholder">
-					<p>
-						{ __(
-							'No images selected. Use the sidebar to add images.',
-							'simple-image-gallery'
-						) }
-					</p>
-				</div>
-			);
-		}
-
-		return (
-			<div className="sig-gallery" style={ { '--sig-height': height } }>
+	let preview;
+	if ( isWoo ) {
+		preview = (
+			<div className="sig-editor-placeholder">
+				<p>
+					{ __(
+						'WooCommerce product images will appear here on the frontend.',
+						'simple-image-gallery'
+					) }
+				</p>
+			</div>
+		);
+	} else if ( ! hasImages ) {
+		preview = (
+			<div className="sig-editor-placeholder">
+				<p>
+					{ __(
+						'No images selected. Use the sidebar to add images.',
+						'simple-image-gallery'
+					) }
+				</p>
+			</div>
+		);
+	} else {
+		preview = (
+			<div className="sig-gallery" style={ { '--sig-height': safeHeight } }>
 				{ images.map( ( img ) => (
 					<img key={ img.id } src={ img.url } alt={ img.alt } />
 				) ) }
@@ -114,7 +111,7 @@ export default function Edit( { attributes, setAttributes } ) {
 				</PanelBody>
 			</InspectorControls>
 
-			<div { ...blockProps }>{ renderPreview() }</div>
+			<div { ...blockProps }>{ preview }</div>
 		</>
 	);
 }

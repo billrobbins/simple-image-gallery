@@ -9,6 +9,7 @@
   "textdomain": "simple-image-gallery",
   "editorScript": "file:../../index.js",
   "style": "file:../../frontend.css",
+  "viewScript": "file:../../frontend.js",
   "attributes": {
     "source": {
       "type": "string",
@@ -19,6 +20,7 @@
       "default": [],
       "items": {
         "type": "object",
+        "required": ["id", "url"],
         "properties": {
           "id": { "type": "number" },
           "url": { "type": "string" },

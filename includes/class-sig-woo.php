@@ -10,30 +10,32 @@ class SIG_Woo {
 	/**
 	 * Get product images for the current product page.
 	 *
-	 * Returns an array of ['url' => string, 'alt' => string] entries,
+	 * Returns an array of ['id' => int, 'url' => string, 'alt' => string] entries,
 	 * starting with the featured image followed by gallery images.
 	 *
-	 * @return array<int, array{url: string, alt: string}>
+	 * @return array<int, array{id: int, url: string, alt: string}>
 	 */
 	public static function get_product_images(): array {
 		if ( ! function_exists( 'wc_get_product' ) ) {
 			return array();
 		}
 
+		// Cache by post ID before resolving $product to avoid wc_get_product()
+		// DB calls on subsequent renders of the same block on one page.
+		static $cache = array();
+		$post_id = (int) get_the_ID();
+		if ( isset( $cache[ $post_id ] ) ) {
+			return $cache[ $post_id ];
+		}
+
 		global $product;
 
 		if ( ! $product instanceof WC_Product ) {
-			$product = wc_get_product( get_the_ID() );
+			$product = wc_get_product( $post_id );
 		}
 
 		if ( ! $product instanceof WC_Product ) {
-			return array();
-		}
-
-		static $cache = array();
-		$product_id = $product->get_id();
-		if ( isset( $cache[ $product_id ] ) ) {
-			return $cache[ $product_id ];
+			return $cache[ $post_id ] = array();
 		}
 
 		$featured_id = $product->get_image_id();
@@ -49,13 +51,12 @@ class SIG_Woo {
 				continue;
 			}
 			$images[] = array(
+				'id'  => $id,
 				'url' => $url,
 				'alt' => (string) get_post_meta( $id, '_wp_attachment_image_alt', true ),
 			);
 		}
 
-		$cache[ $product_id ] = $images;
-
-		return $images;
+		return $cache[ $post_id ] = $images;
 	}
 }

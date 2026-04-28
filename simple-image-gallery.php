@@ -21,4 +21,3 @@ add_action( 'plugins_loaded', function () {
 	new SIG_Block();
 } );
 
-register_activation_hook( __FILE__, 'flush_rewrite_rules' );
