@@ -23,10 +23,6 @@ class SIG_Block {
 	/**
 	 * Sanitize a CSS dimension value (e.g. 70vh, 400px, 50%).
 	 * Returns the fallback if the value doesn't match a safe pattern.
-	 *
-	 * @param string $value    User-supplied CSS value.
-	 * @param string $fallback Safe default.
-	 * @return string
 	 */
 	private function sanitize_css_dimension( string $value, string $fallback ): string {
 		if ( preg_match( '/^\d+(\.\d+)?(px|em|rem|vh|vw|%)$/', $value ) ) {
@@ -42,37 +38,36 @@ class SIG_Block {
 	 * @return string HTML output.
 	 */
 	public function render( array $attributes ): string {
-		$source = isset( $attributes['source'] ) ? $attributes['source'] : 'woocommerce';
-		$raw_height = isset( $attributes['height'] ) && $attributes['height'] ? $attributes['height'] : '70vh';
-		$height = $this->sanitize_css_dimension( $raw_height, '70vh' );
+		$source = $attributes['source'] ?? 'woocommerce';
+		$height = $this->sanitize_css_dimension( $attributes['height'] ?? '70vh', '70vh' );
 
-		if ( 'woocommerce' === $source ) {
-			$images = SIG_Woo::get_product_images();
-		} else {
-			$images = isset( $attributes['images'] ) && is_array( $attributes['images'] )
-				? $attributes['images']
-				: array();
-		}
+		$images = ( 'woocommerce' === $source )
+			? SIG_Woo::get_product_images()
+			: ( $attributes['images'] ?? array() );
 
 		if ( empty( $images ) ) {
 			return '';
 		}
 
-		$style = esc_attr( '--sig-height: ' . $height );
-
 		$this->enqueue_frontend_assets();
 
-		$html  = '<div class="sig-gallery" role="region" aria-label="' . esc_attr__( 'Image gallery', 'simple-image-gallery' ) . '" tabindex="0" style="' . $style . '" data-source="' . esc_attr( $source ) . '">';
+		$html = sprintf(
+			'<div class="sig-gallery" role="region" aria-label="%s" tabindex="0" style="%s" data-source="%s">',
+			esc_attr__( 'Image gallery', 'simple-image-gallery' ),
+			esc_attr( '--sig-height: ' . $height ),
+			esc_attr( $source )
+		);
+
 		foreach ( $images as $image ) {
 			$url = isset( $image['url'] ) ? esc_url( $image['url'] ) : '';
-			$alt = isset( $image['alt'] ) ? esc_attr( $image['alt'] ) : '';
-			if ( $url ) {
-				$html .= '<img src="' . $url . '" alt="' . $alt . '" loading="lazy">';
+			if ( ! $url ) {
+				continue;
 			}
+			$alt = isset( $image['alt'] ) ? esc_attr( $image['alt'] ) : '';
+			$html .= '<img src="' . $url . '" alt="' . $alt . '" loading="lazy">';
 		}
-		$html .= '</div>';
 
-		return $html;
+		return $html . '</div>';
 	}
 
 	public function enqueue_frontend_assets(): void {

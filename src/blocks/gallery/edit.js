@@ -15,14 +15,12 @@ import {
 
 /**
  * Editor component for the Simple Image Gallery block.
- *
- * @param {Object}   props               Block props.
- * @param {Object}   props.attributes    Block attributes.
- * @param {Function} props.setAttributes Attribute setter.
  */
 export default function Edit( { attributes, setAttributes } ) {
 	const { source, images, height } = attributes;
 	const blockProps = useBlockProps( { className: 'sig-gallery-editor' } );
+	const isWoo = source === 'woocommerce';
+	const hasImages = images.length > 0;
 
 	function onSelectImages( media ) {
 		setAttributes( {
@@ -32,6 +30,42 @@ export default function Edit( { attributes, setAttributes } ) {
 				alt: item.alt || '',
 			} ) ),
 		} );
+	}
+
+	function renderPreview() {
+		if ( isWoo ) {
+			return (
+				<div className="sig-editor-placeholder">
+					<p>
+						{ __(
+							'WooCommerce product images will appear here on the frontend.',
+							'simple-image-gallery'
+						) }
+					</p>
+				</div>
+			);
+		}
+
+		if ( ! hasImages ) {
+			return (
+				<div className="sig-editor-placeholder">
+					<p>
+						{ __(
+							'No images selected. Use the sidebar to add images.',
+							'simple-image-gallery'
+						) }
+					</p>
+				</div>
+			);
+		}
+
+		return (
+			<div className="sig-gallery" style={ { '--sig-height': height } }>
+				{ images.map( ( img ) => (
+					<img key={ img.id } src={ img.url } alt={ img.alt } />
+				) ) }
+			</div>
+		);
 	}
 
 	return (
@@ -59,7 +93,7 @@ export default function Edit( { attributes, setAttributes } ) {
 						value={ height }
 						onChange={ ( value ) => setAttributes( { height: value } ) }
 					/>
-					{ source === 'adhoc' && (
+					{ ! isWoo && (
 						<MediaUploadCheck>
 							<MediaUpload
 								onSelect={ onSelectImages }
@@ -69,7 +103,7 @@ export default function Edit( { attributes, setAttributes } ) {
 								value={ images.map( ( img ) => img.id ) }
 								render={ ( { open } ) => (
 									<Button variant="secondary" onClick={ open }>
-										{ images.length > 0
+										{ hasImages
 											? __( 'Edit Gallery Images', 'simple-image-gallery' )
 											: __( 'Select Gallery Images', 'simple-image-gallery' ) }
 									</Button>
@@ -80,38 +114,7 @@ export default function Edit( { attributes, setAttributes } ) {
 				</PanelBody>
 			</InspectorControls>
 
-			<div { ...blockProps }>
-				{ source === 'woocommerce' && (
-					<div className="sig-editor-placeholder">
-						<p>
-							{ __(
-								'WooCommerce product images will appear here on the frontend.',
-								'simple-image-gallery'
-							) }
-						</p>
-					</div>
-				) }
-				{ source === 'adhoc' && images.length === 0 && (
-					<div className="sig-editor-placeholder">
-						<p>
-							{ __(
-								'No images selected. Use the sidebar to add images.',
-								'simple-image-gallery'
-							) }
-						</p>
-					</div>
-				) }
-				{ source === 'adhoc' && images.length > 0 && (
-					<div
-						className="sig-gallery"
-						style={ { '--sig-height': height } }
-					>
-						{ images.map( ( img ) => (
-							<img key={ img.id } src={ img.url } alt={ img.alt } />
-						) ) }
-					</div>
-				) }
-			</div>
+			<div { ...blockProps }>{ renderPreview() }</div>
 		</>
 	);
 }

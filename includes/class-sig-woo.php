@@ -36,19 +36,11 @@ class SIG_Woo {
 			return $cache[ $product_id ];
 		}
 
-		$image_ids = array();
-
 		$featured_id = $product->get_image_id();
-		if ( $featured_id ) {
-			$image_ids[] = (int) $featured_id;
-		}
-
-		$gallery_ids = $product->get_gallery_image_ids();
-		if ( is_array( $gallery_ids ) ) {
-			foreach ( $gallery_ids as $id ) {
-				$image_ids[] = (int) $id;
-			}
-		}
+		$image_ids   = array_merge(
+			$featured_id ? array( (int) $featured_id ) : array(),
+			array_map( 'intval', (array) $product->get_gallery_image_ids() )
+		);
 
 		$images = array();
 		foreach ( $image_ids as $id ) {
@@ -56,10 +48,9 @@ class SIG_Woo {
 			if ( ! $url ) {
 				continue;
 			}
-			$alt = (string) get_post_meta( $id, '_wp_attachment_image_alt', true );
 			$images[] = array(
 				'url' => $url,
-				'alt' => $alt,
+				'alt' => (string) get_post_meta( $id, '_wp_attachment_image_alt', true ),
 			);
 		}
 
