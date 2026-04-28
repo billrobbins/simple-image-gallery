@@ -1,0 +1,1 @@
+(()=>{"use strict";const e={ArrowRight:200,ArrowLeft:-200};function t(t){t.addEventListener("keydown",o=>{const n=e[o.key];void 0!==n&&(o.preventDefault(),t.scrollBy({left:n,behavior:"smooth"}))})}function o(){document.querySelectorAll(".sig-gallery").forEach(t)}"loading"===document.readyState?document.addEventListener("DOMContentLoaded",o):o()})();

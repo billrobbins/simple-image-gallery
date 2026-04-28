@@ -1,3 +1,4 @@
 node_modules/
-build/
+package-lock.json
+.playwright-mcp/
 .DS_Store
