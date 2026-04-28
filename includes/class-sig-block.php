@@ -22,12 +22,6 @@ class SIG_Block {
 	}
 
 	/**
-	 * Render the gallery block on the frontend.
-	 *
-	 * @param array $attributes Block attributes.
-	 * @return string HTML output.
-	 */
-	/**
 	 * Sanitize a CSS dimension value (e.g. 70vh, 400px, 50%).
 	 * Returns the fallback if the value doesn't match a safe pattern.
 	 *
@@ -42,6 +36,12 @@ class SIG_Block {
 		return $fallback;
 	}
 
+	/**
+	 * Render the gallery block on the frontend.
+	 *
+	 * @param array $attributes Block attributes.
+	 * @return string HTML output.
+	 */
 	public function render( array $attributes ): string {
 		$source = isset( $attributes['source'] ) ? $attributes['source'] : 'woocommerce';
 		$raw_height = isset( $attributes['height'] ) && $attributes['height'] ? $attributes['height'] : '70vh';
