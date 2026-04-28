@@ -1,5 +1,5 @@
 import './editor.css';
-import { useState } from '@wordpress/element';
+import { useState, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import {
 	useBlockProps,
@@ -24,8 +24,12 @@ export default function Edit( { attributes, setAttributes } ) {
 	const safeHeight = SAFE_DIMENSION.test( height ) ? height : '70vh';
 
 	// Local state for the height input so setAttributes (and undo entries)
-	// only fire on blur, not on every keystroke.
+	// only fire on blur, not on every keystroke. Sync back when undo changes
+	// the committed attribute externally.
 	const [ heightInput, setHeightInput ] = useState( height );
+	useEffect( () => {
+		setHeightInput( height );
+	}, [ height ] );
 
 	function onSelectImages( media ) {
 		setAttributes( {
