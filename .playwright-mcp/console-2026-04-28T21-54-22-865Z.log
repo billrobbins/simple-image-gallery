@@ -1,9 +1,0 @@
-[     379ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:8888/wp-includes/js/dist/vendor/react-dom.js?ver=18.3.1.1:29904
-[     387ms] [LOG] JQMIGRATE: Migrate is installed with logging active, version 3.4.1 @ http://localhost:8888/wp-includes/js/jquery/jquery-migrate.js?ver=3.4.1:103
-[     577ms] [WARNING] You may test your Stripe.js integration over HTTP. However, live Stripe.js integrations must use HTTPS. @ https://js.stripe.com/clover/stripe.js:0
-[    1090ms] [WARNING] [Stripe.js] You have not registered or verified the domain, so the following payment methods are not enabled in the Express Checkout Element: 
-
-- apple_pay
-
-Please follow https://stripe.com/docs/payments/payment-methods/pmd-registration to register and verify the domain. @ https://js.stripe.com/v3/fingerprinted/js/controller-with-preconnect-e4a944aefdf3be278bb1cb726f6929f8.js:0
-[    1092ms] [WARNING] [Stripe.js] You are testing over HTTP, so Google Pay will not appear. You must use HTTPS in order to use Google Pay. @ https://js.stripe.com/v3/fingerprinted/js/controller-with-preconnect-e4a944aefdf3be278bb1cb726f6929f8.js:0
