@@ -11,7 +11,6 @@ import {
 	RadioControl,
 	TextControl,
 	Button,
-	ResponsiveWrapper,
 } from '@wordpress/components';
 
 /**
@@ -34,8 +33,6 @@ export default function Edit( { attributes, setAttributes } ) {
 			} ) ),
 		} );
 	}
-
-	const previewImages = source === 'adhoc' ? images : [];
 
 	return (
 		<>
@@ -94,7 +91,7 @@ export default function Edit( { attributes, setAttributes } ) {
 						</p>
 					</div>
 				) }
-				{ source === 'adhoc' && previewImages.length === 0 && (
+				{ source === 'adhoc' && images.length === 0 && (
 					<div className="sig-editor-placeholder">
 						<p>
 							{ __(
@@ -104,12 +101,12 @@ export default function Edit( { attributes, setAttributes } ) {
 						</p>
 					</div>
 				) }
-				{ source === 'adhoc' && previewImages.length > 0 && (
+				{ source === 'adhoc' && images.length > 0 && (
 					<div
 						className="sig-gallery"
 						style={ { '--sig-height': height } }
 					>
-						{ previewImages.map( ( img ) => (
+						{ images.map( ( img ) => (
 							<img key={ img.id } src={ img.url } alt={ img.alt } />
 						) ) }
 					</div>

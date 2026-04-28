@@ -10,40 +10,36 @@ import './frontend.css';
 document.addEventListener( 'DOMContentLoaded', initGalleries );
 
 function initGalleries() {
-	const galleries = document.querySelectorAll( '.sig-gallery' );
-	galleries.forEach( initGallery );
+	document.querySelectorAll( '.sig-gallery' ).forEach( initGallery );
 }
 
 /**
- * Attach the scroll-to-horizontal behavior to a single gallery element.
+ * Attach scroll-to-horizontal behavior to a single gallery element.
+ * Caches the overflow state and refreshes it on resize to avoid
+ * forced layout reflow on every wheel event.
  *
  * @param {HTMLElement} gallery
  */
 function initGallery( gallery ) {
-	gallery.addEventListener( 'wheel', onWheel, { passive: false } );
-}
+	let hasOverflow = gallery.scrollWidth > gallery.clientWidth;
 
-/**
- * Handle wheel events: redirect deltaY to scrollLeft.
- *
- * @param {WheelEvent} event
- */
-function onWheel( event ) {
-	const gallery = /** @type {HTMLElement} */ ( event.currentTarget );
+	const observer = new ResizeObserver( () => {
+		hasOverflow = gallery.scrollWidth > gallery.clientWidth;
+	} );
+	observer.observe( gallery );
 
-	// Only intercept if there is overflow to scroll horizontally.
-	const hasHorizontalOverflow = gallery.scrollWidth > gallery.clientWidth;
-	if ( ! hasHorizontalOverflow ) {
-		return;
-	}
-
-	event.preventDefault();
-
-	// Use deltaY for vertical scroll wheels; fall back to deltaX for
-	// trackpads that emit horizontal delta directly.
-	const delta = Math.abs( event.deltaY ) >= Math.abs( event.deltaX )
-		? event.deltaY
-		: event.deltaX;
-
-	gallery.scrollLeft += delta;
+	gallery.addEventListener(
+		'wheel',
+		( event ) => {
+			if ( ! hasOverflow ) {
+				return;
+			}
+			event.preventDefault();
+			const delta = Math.abs( event.deltaY ) >= Math.abs( event.deltaX )
+				? event.deltaY
+				: event.deltaX;
+			gallery.scrollLeft += delta;
+		},
+		{ passive: false }
+	);
 }

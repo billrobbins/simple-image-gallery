@@ -7,10 +7,6 @@ defined( 'ABSPATH' ) || exit;
 
 class SIG_Woo {
 
-	public function __construct() {
-		// No hooks needed — data is fetched on demand via static method.
-	}
-
 	/**
 	 * Get product images for the current product page.
 	 *
@@ -32,6 +28,12 @@ class SIG_Woo {
 
 		if ( ! $product instanceof WC_Product ) {
 			return array();
+		}
+
+		static $cache = array();
+		$product_id = $product->get_id();
+		if ( isset( $cache[ $product_id ] ) ) {
+			return $cache[ $product_id ];
 		}
 
 		$image_ids = array();
@@ -60,6 +62,8 @@ class SIG_Woo {
 				'alt' => $alt,
 			);
 		}
+
+		$cache[ $product_id ] = $images;
 
 		return $images;
 	}

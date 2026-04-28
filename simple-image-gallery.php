@@ -19,7 +19,6 @@ require_once SIG_PATH . 'includes/class-sig-woo.php';
 
 add_action( 'plugins_loaded', function () {
 	new SIG_Block();
-	new SIG_Woo();
 } );
 
 register_activation_hook( __FILE__, function () {
