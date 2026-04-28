@@ -24,17 +24,12 @@ const KEYBOARD_SCROLL_STEP = 200;
  * @param {HTMLElement} gallery
  */
 function initGallery( gallery ) {
-	let hasOverflow = gallery.scrollWidth > gallery.clientWidth;
-
-	const observer = new ResizeObserver( () => {
-		hasOverflow = gallery.scrollWidth > gallery.clientWidth;
-	} );
-	observer.observe( gallery );
-
 	gallery.addEventListener(
 		'wheel',
 		( event ) => {
-			if ( ! hasOverflow ) {
+			// Check inline — images may not be loaded at DOMContentLoaded so
+			// a cached value would be stale and prevent() would never fire.
+			if ( gallery.scrollWidth <= gallery.clientWidth ) {
 				return;
 			}
 			event.preventDefault();

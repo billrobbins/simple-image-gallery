@@ -4,6 +4,7 @@
 
 .sig-gallery {
 	display: flex;
+	gap: 12px;
 	height: var( --sig-height, 70vh );
 	overflow-x: auto;
 	overflow-y: hidden;
